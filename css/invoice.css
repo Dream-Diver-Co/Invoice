@@ -68,9 +68,14 @@
             article h1 { clip: rect(0 0 0 0); position: absolute; }
 
             article address { 
-                float: left; 
+                /* float: left; 
                 font-size: 125%; 
-                /* font-weight: bold;  */
+                font-weight: bold;  */
+                float: left;
+                font-size: 75%;
+                font-style: normal;
+                line-height: 1.25;
+                margin: 0 1em 1em 0;
             }
 
            
