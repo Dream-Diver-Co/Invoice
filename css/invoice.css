@@ -41,7 +41,13 @@
 
             /* page */
 
-            html { font: 16px/1 'Open Sans', sans-serif; overflow: auto; padding: 0.5in; }
+            html { 
+                font: 16px/1 'Open Sans', sans-serif; 
+                overflow: auto; 
+                /* padding: 0.5in;   */
+               
+            }
+
             html { background: #999; cursor: default; }
 
             body { box-sizing: border-box; height: 11in; margin: 0 auto; overflow: hidden; padding: 0.3in; width: 8.5in; }
@@ -235,7 +241,7 @@
     /* CSS rules for mobile devices */
     .payment{
         text-align: end;
-        margin-top: -191px !important;
+        margin-top: -128px !important;
     }
     .payment p{
         margin-bottom: 6px;
