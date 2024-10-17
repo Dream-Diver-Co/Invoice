@@ -58,7 +58,7 @@
             header { margin: 0 0 3em; }
             header:after { clear: both; content: ""; display: table; }
 
-            header h1 { background: #000; border-radius: 0.25em; color: #FFF; margin: 0 0 1em; padding: 0.5em 0; }
+            header h1 { background: #BBB; border-radius: 0.25em; color: #000000; margin: 0 0 1em; padding: 0.5em 0; }
             header address { float: left; font-size: 75%; font-style: normal; line-height: 1.25; margin: 0 1em 1em 0; }
             header address-invoice { float: right; font-size: 75%; font-style: normal; line-height: 1.25; margin: 0 1em 1em 0; }
             header address p { margin: 0 0 0.25em; }
