@@ -182,6 +182,7 @@
                 width: 80px;
                 height: 30px;
                 margin-left: 41%; 
+                margin-top: 30px;
             }
 
             .add-print:hover {  background: #0ca803; color: white;}
