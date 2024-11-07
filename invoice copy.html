@@ -44,8 +44,6 @@
 					<td><span contenteditable>January 01, 2024</span></td>
 				</tr>
 			</table>
-			
-
 			<table class="inventory">
 				<thead>
 					<tr>
@@ -53,7 +51,6 @@
 						<th><span contenteditable>Description</span></th>
 						<th><span contenteditable>Rate</span></th>
 						<th><span contenteditable>Quantity</span></th>
-						<th><span contenteditable>VAT (%)</span></th> <!-- New VAT field -->
 						<th><span contenteditable>Price</span></th>
 					</tr>
 				</thead>
@@ -63,24 +60,25 @@
 						<td><span contenteditable>Experience</span></td>
 						<td><span data-prefix>€</span><span contenteditable>100.00</span></td>
 						<td><span contenteditable>1</span></td>
-						<td><span contenteditable>0</span></td> <!-- VAT input field -->
 						<td><span data-prefix>€</span><span>100.00</span></td>
 					</tr>
 				</tbody>
 			</table>
 			<a class="add">+</a>
-			
 			<table class="balance">
 				<tr>
 					<th><span contenteditable>Sub Total</span></th>
 					<td><span data-prefix>€</span><span>100.00</span></td>
 				</tr>
 				<tr>
+					<th><span contenteditable>VAT in items (21%) (1)</span></th>
+					<td><span contenteditable></span></td>
+				</tr>
+				<tr>
 					<th><span contenteditable>Total</span></th>
 					<td><span data-prefix>€</span><span>100.00</span></td>
 				</tr>
 			</table>
-			
 		</article>
 	
 		<aside>
@@ -148,44 +146,43 @@
 					<td><span contenteditable></span></td>
 					<td><span data-prefix>€</span><span contenteditable>0.00</span></td>
 					<td><span contenteditable>0</span></td>
-					<td><span contenteditable>0</span></td> <!-- Add VAT field -->
 					<td><span data-prefix>€</span><span>0.00</span></td>
 				`;
 				return row;
 			}
-
 	
 			function updateInvoice() {
 				let total = 0;
 				const rows = document.querySelectorAll('table.inventory tbody tr');
-
+	
 				// Calculate Sub Total
 				rows.forEach(row => {
 					const cells = row.querySelectorAll('span:last-child');
-					const rate = parseFloat(cells[2].textContent) || 0;  // Rate
-					const quantity = parseFloat(cells[3].textContent) || 0;  // Quantity
-					const vat = parseFloat(cells[4].textContent) || 0;  // VAT
+					const rate = parseFloat(cells[2].textContent) || 0;  // Ensure there's a default value
+					const quantity = parseFloat(cells[3].textContent) || 0;  // Ensure there's a default value
 					const price = rate * quantity;
-					const vatAmount = (vat / 100) * price;  // Calculate VAT
-					const totalPrice = price + vatAmount;  // Add VAT to price
-
-					// Update the price column in the current row (with VAT added)
-					cells[5].textContent = totalPrice.toFixed(2); // Update the price with VAT
-
-					total += totalPrice; // Add to the total
+	
+					// Update the price column in the current row
+					cells[4].textContent = price.toFixed(2);
+					total += price;
 				});
-
-				// Update Sub Total in the balance table (without VAT included)
+	
+				// Update Sub Total in the balance table
 				document.querySelector('table.balance td:nth-child(2) span:last-child').textContent = total.toFixed(2);
-
-				// Update the Total (with VAT included)
-				document.querySelector('table.balance tr:nth-child(2) td span:last-child').textContent = total.toFixed(2);
+	
+				// Get VAT percentage (21%) and apply it to Sub Total
+				const vatPercentage = 21; // You can also retrieve this value dynamically if needed
+				const vatAmount = (vatPercentage / 100) * total;
+	
+				// Update VAT amount in the balance table
+				document.querySelector('table.balance tr:nth-child(2) td span:last-child').textContent = vatAmount.toFixed(2);
+	
+				// Update the Total
+				const finalTotal = total + vatAmount;
+				document.querySelector('table.balance tr:nth-child(3) td span:last-child').textContent = finalTotal.toFixed(2);
 			}
-
-
 		</script>
 	
-
 	</body>
 	
 
