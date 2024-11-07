@@ -53,7 +53,7 @@
 						<th><span contenteditable>Description</span></th>
 						<th><span contenteditable>Rate</span></th>
 						<th><span contenteditable>Quantity</span></th>
-						<th><span contenteditable>VAT (%)</span></th> <!-- New VAT field -->
+						<th><span contenteditable>VAT (%)</span></th> <!-- VAT field -->
 						<th><span contenteditable>Price</span></th>
 					</tr>
 				</thead>
@@ -75,11 +75,18 @@
 					<th><span contenteditable>Sub Total</span></th>
 					<td><span data-prefix>€</span><span>100.00</span></td>
 				</tr>
+			
+				<tr>
+					<th><span contenteditable>Total VAT</span></th> <!-- New Total VAT row -->
+					<td><span data-prefix>€</span><span>0.00</span></td>
+				</tr>
+			
 				<tr>
 					<th><span contenteditable>Total</span></th>
 					<td><span data-prefix>€</span><span>100.00</span></td>
 				</tr>
 			</table>
+			
 			
 		</article>
 	
@@ -119,71 +126,76 @@
 			<button class="add-print" onclick="printInvoice()"><i class="fas fa-print"></i> Print Invoice</button>
 		</div>
 	
-		<script>
+		
+
+	<script>
 			function printInvoice() {
-				window.print();
-			}
-	
-			document.addEventListener('DOMContentLoaded', onContentLoad);
-	
-			function onContentLoad() {
+			window.print();
+		}
+
+		document.addEventListener('DOMContentLoaded', onContentLoad);
+
+		function onContentLoad() {
+			updateInvoice();
+
+			document.addEventListener('click', (e) => {
+				if (e.target.matches('.add')) {
+					document.querySelector('table.inventory tbody').appendChild(generateTableRow());
+				} else if (e.target.matches('.cut')) {
+					e.target.closest('tr').remove();
+				}
 				updateInvoice();
-	
-				document.addEventListener('click', (e) => {
-					if (e.target.matches('.add')) {
-						document.querySelector('table.inventory tbody').appendChild(generateTableRow());
-					} else if (e.target.matches('.cut')) {
-						e.target.closest('tr').remove();
-					}
-					updateInvoice();
-				});
-	
-				document.addEventListener('input', updateInvoice);
-			}
-	
-			function generateTableRow() {
-				const row = document.createElement('tr');
-				row.innerHTML = `
-					<td><a class="cut">-</a><span contenteditable></span></td>
-					<td><span contenteditable></span></td>
-					<td><span data-prefix>€</span><span contenteditable>0.00</span></td>
-					<td><span contenteditable>0</span></td>
-					<td><span contenteditable>0</span></td> <!-- Add VAT field -->
-					<td><span data-prefix>€</span><span>0.00</span></td>
-				`;
-				return row;
-			}
+			});
 
-	
-			function updateInvoice() {
-				let total = 0;
-				const rows = document.querySelectorAll('table.inventory tbody tr');
+			document.addEventListener('input', updateInvoice);
+		}
 
-				// Calculate Sub Total
-				rows.forEach(row => {
-					const cells = row.querySelectorAll('span:last-child');
-					const rate = parseFloat(cells[2].textContent) || 0;  // Rate
-					const quantity = parseFloat(cells[3].textContent) || 0;  // Quantity
-					const vat = parseFloat(cells[4].textContent) || 0;  // VAT
-					const price = rate * quantity;
-					const vatAmount = (vat / 100) * price;  // Calculate VAT
-					const totalPrice = price + vatAmount;  // Add VAT to price
+		function generateTableRow() {
+			const row = document.createElement('tr');
+			row.innerHTML = `
+				<td><a class="cut">-</a><span contenteditable></span></td>
+				<td><span contenteditable></span></td>
+				<td><span data-prefix>€</span><span contenteditable>0.00</span></td>
+				<td><span contenteditable>0</span></td>
+				<td><span contenteditable>0</span></td> <!-- VAT field -->
+				<td><span data-prefix>€</span><span>0.00</span></td>
+			`;
+			return row;
+		}
 
-					// Update the price column in the current row (with VAT added)
-					cells[5].textContent = totalPrice.toFixed(2); // Update the price with VAT
+		function updateInvoice() {
+			let total = 0;
+			let totalVat = 0;  // Variable to hold total VAT
+			const rows = document.querySelectorAll('table.inventory tbody tr');
 
-					total += totalPrice; // Add to the total
-				});
+			// Calculate Sub Total and Total VAT
+			rows.forEach(row => {
+				const cells = row.querySelectorAll('span:last-child');
+				const rate = parseFloat(cells[2].textContent) || 0;  // Rate
+				const quantity = parseFloat(cells[3].textContent) || 0;  // Quantity
+				const vat = parseFloat(cells[4].textContent) || 0;  // VAT
+				const price = rate * quantity;
+				const vatAmount = (vat / 100) * price;  // Calculate VAT
+				const totalPrice = price + vatAmount;  // Add VAT to price
 
-				// Update Sub Total in the balance table (without VAT included)
-				document.querySelector('table.balance td:nth-child(2) span:last-child').textContent = total.toFixed(2);
+				// Update the price column in the current row (with VAT added)
+				cells[5].textContent = totalPrice.toFixed(2); // Update the price with VAT
 
-				// Update the Total (with VAT included)
-				document.querySelector('table.balance tr:nth-child(2) td span:last-child').textContent = total.toFixed(2);
-			}
+				total += price; // Add to the subtotal (without VAT)
+				totalVat += vatAmount; // Add to the total VAT
+			});
 
+			// Update Sub Total in the balance table (without VAT included)
+			document.querySelector('table.balance tr:nth-child(1) td span:last-child').textContent = total.toFixed(2);
 
-		</script>
+			// Update Total VAT in the balance table
+			document.querySelector('table.balance tr:nth-child(2) td span:last-child').textContent = totalVat.toFixed(2);
+
+			// Update the Total (Sub Total + Total VAT)
+			document.querySelector('table.balance tr:nth-child(3) td span:last-child').textContent = (total + totalVat).toFixed(2);
+		}
+
+	</script>
 	
 
 	</body>
